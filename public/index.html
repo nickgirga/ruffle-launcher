@@ -410,6 +410,51 @@ body.fill-window #flashClipper {
     background: #45475a;
 }
 
+/* Footer section */
+#footerSection {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #313244;
+    text-align: center;
+}
+
+#footerSection p {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: #a6adc8;
+}
+
+#sourceCodeBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: none;
+    background: #89b4fa;
+    color: #1e1e2e;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.35),
+        0 1px 1px rgba(0,0,0,0.25);
+}
+
+#sourceCodeBtn:hover {
+    background: #a6c8ff;
+    box-shadow:
+        0 3px 6px rgba(0,0,0,0.4),
+        0 2px 2px rgba(0,0,0,0.3);
+}
+
+#sourceCodeBtn:active {
+    background: #7aa2f7;
+    transform: scale(0.98);
+}
+
 /* Mobile Drawer Button */
 #menuButton {
     position: fixed;
@@ -514,6 +559,12 @@ body.forceDrawerButton #menuButton {
         <button id="fillWindowBtn" type="button">Fill Window</button>
         <button id="fullscreenBtn" type="button">Fullscreen</button>
         <button id="clearDataBtn" type="button">Clear All Data</button>
+    </div>
+
+    <!-- Footer -->
+    <div id="footerSection">
+        <p>Made with ❤️ by Nick Girga</p>
+        <a id="sourceCodeBtn" href="https://gitlab.com/nickgirga/ruffle-launcher" target="_blank" rel="noopener noreferrer">Source Code</a>
     </div>
 </div>
 
