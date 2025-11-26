@@ -34,6 +34,63 @@ window.RufflePlayer.config = {
 <style>
 * { box-sizing: border-box; }
 
+/* ===== THEME SYSTEM ===== */
+/* Catppuccin Mocha (Default) */
+:root, body[data-theme="catppuccin"] {
+    --primary: #89b4fa;
+    --primary-hover: #a6c8ff;
+    --primary-active: #7aa2f7;
+    --on-primary: #1e1e2e;
+    
+    --secondary: #b4befe;
+    --on-secondary: #1e1e2e;
+    
+    --surface: #11111b;
+    --surface-bright: #181825;
+    --surface-container: #313244;
+    --surface-container-high: #45475a;
+    --surface-container-highest: #585b70;
+    --on-surface: #cdd6f4;
+    --on-surface-variant: #a6adc8;
+    
+    --background: #1e1e2e;
+    --on-background: #cdd6f4;
+    
+    --outline: #313244;
+    --outline-variant: #45475a;
+    
+    --error: #f38ba8;
+    --error-hover: #eba0ac;
+}
+
+/* Nextcloud Pink */
+body[data-theme="nextcloud-pink"] {
+    --primary: rgb(246, 178, 223);
+    --primary-hover: rgb(255, 195, 235);
+    --primary-active: rgb(230, 160, 210);
+    --on-primary: rgb(79, 30, 67);
+    
+    --secondary: rgb(221, 190, 208);
+    --on-secondary: rgb(63, 42, 56);
+    
+    --surface: rgb(24, 18, 21);
+    --surface-bright: rgb(32, 26, 30);
+    --surface-container: rgb(47, 40, 44);
+    --surface-container-high: rgb(58, 51, 55);
+    --surface-container-highest: rgb(79, 68, 74);
+    --on-surface: rgb(236, 223, 228);
+    --on-surface-variant: rgb(210, 194, 202);
+    
+    --background: rgb(32, 26, 30);
+    --on-background: rgb(236, 223, 228);
+    
+    --outline: rgb(79, 68, 74);
+    --outline-variant: rgb(155, 141, 148);
+    
+    --error: rgb(255, 180, 171);
+    --error-hover: rgb(255, 200, 195);
+}
+
 html, body {
     margin: 0;
     padding: 0;
@@ -41,9 +98,10 @@ html, body {
     height: 100%;
     overflow: hidden;
 
-    background: #1e1e2e;
-    color: #cdd6f4;
+    background-color: var(--background);
+    color: var(--on-background);
     font-family: "Inter", "Roboto", sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* --- Flash Container --- */
@@ -52,7 +110,7 @@ html, body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #181825;
+    background: var(--surface);
     border-radius: 20px;
     overflow: hidden;
     width: 800px;
@@ -63,6 +121,7 @@ html, body {
     box-shadow:
         0 4px 12px rgba(0,0,0,0.45),
         0 2px 3px rgba(0,0,0,0.4);
+    transition: background-color 0.3s ease;
 }
 
 #container {
@@ -94,11 +153,11 @@ body.fill-window #flashClipper {
     height: 100%;
     width: 290px;
     max-width: 85%;
-    background: #11111b;
-    color: #cdd6f4;
+    background: var(--surface);
+    color: var(--on-surface);
     z-index: 99999;
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
+    transition: transform 0.25s ease, background-color 0.3s ease, color 0.3s ease;
     padding: 16px 14px 10px 14px;
     border-radius: 0 18px 18px 0;
     box-shadow: 4px 0 16px rgba(0,0,0,0.45), 2px 0 4px rgba(0,0,0,0.35);
@@ -113,8 +172,9 @@ body.fill-window #flashClipper {
     margin: 4px 0 12px 0;
     font-size: 21px;
     font-weight: 600;
-    color: #b4befe;
+    color: var(--secondary);
     text-align: center;
+    transition: color 0.3s ease;
 }
 
 /* Search bar */
@@ -126,15 +186,16 @@ body.fill-window #flashClipper {
     width: 100%;
     padding: 8px 10px;
     border-radius: 999px;
-    border: 1px solid #313244;
-    background: #181825;
-    color: #cdd6f4;
+    border: 1px solid var(--outline);
+    background: var(--surface-bright);
+    color: var(--on-surface);
     font-size: 14px;
+    transition: border-color 0.15s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 #searchInput:focus {
     outline: none;
-    border-color: #89b4fa;
+    border-color: var(--primary);
 }
 
 /* Category sections */
@@ -153,7 +214,8 @@ body.fill-window #flashClipper {
 .category-header span {
     font-size: 15px;
     font-weight: 500;
-    color: #cdd6f4;
+    color: var(--on-surface);
+    transition: color 0.3s ease;
 }
 
 .toggle-btn {
@@ -161,14 +223,14 @@ body.fill-window #flashClipper {
     height: 22px;
     border-radius: 50%;
     border: none;
-    background: #181825;
-    color: #cdd6f4;
+    background: var(--surface-bright);
+    color: var(--on-surface);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background 0.15s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .category-section.collapsed .category-body {
@@ -201,20 +263,20 @@ body.fill-window #flashClipper {
     position: relative;
     padding: 12px;
     padding-right: 36px;
-    background: #313244;
+    background: var(--surface-container);
     border-radius: 12px;
-    border: 1px solid #45475a;
-    color: #cdd6f4;
+    border: 1px solid var(--outline-variant);
+    color: var(--on-surface);
     cursor: pointer;
-    transition: 0.15s ease;
+    transition: 0.15s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     font-size: 14px;
     line-height: 1.4;
     box-shadow: 0 1px 2px rgba(0,0,0,0.25), 0 1px 1px rgba(0,0,0,0.2);
 }
 
 .game-btn:hover {
-    background: #45475a;
-    border-color: #585b70;
+    background: var(--surface-container-high);
+    border-color: var(--surface-container-highest);
 }
 
 /* Delete button for custom games */
@@ -224,16 +286,16 @@ body.fill-window #flashClipper {
     right: 8px;
     width: 24px;
     height: 24px;
-    background: #f38ba8;
+    background: var(--error);
     border: none;
     border-radius: 6px;
-    color: #1e1e2e;
+    color: var(--on-primary);
     font-size: 18px;
     font-weight: normal;
     line-height: 24px;
     cursor: pointer;
     opacity: 0;
-    transition: opacity 0.15s ease, background 0.15s ease;
+    transition: opacity 0.15s ease, background 0.15s ease, background-color 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -248,11 +310,11 @@ body.fill-window #flashClipper {
 }
 
 .delete-game-btn:hover {
-    background: #eba0ac;
+    background: var(--error-hover);
 }
 
 .delete-game-btn:active {
-    background: #f38ba8;
+    background: var(--error);
     transform: scale(0.95);
 }
 
@@ -261,14 +323,24 @@ body.fill-window #flashClipper {
 #resolutionBox {
     margin-top: 16px;
     padding-top: 14px;
-    border-top: 1px solid #313244;
+    border-top: 1px solid var(--outline);
+    transition: border-color 0.3s ease;
+}
+
+#themeBox {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--outline);
+    transition: border-color 0.3s ease;
 }
 
 #customLoader h2,
-#resolutionBox h2 {
-    color: #89b4fa;
+#resolutionBox h2,
+#themeBox h2 {
+    color: var(--primary);
     font-size: 16px;
     margin-bottom: 8px;
+    transition: color 0.3s ease;
 }
 
 /* Inputs */
@@ -276,21 +348,21 @@ body.fill-window #flashClipper {
 #resolutionInput {
     width: 100%;
     padding: 10px 12px;
-    background: #181825;
-    border: 1px solid #313244;
-    color: #cdd6f4;
+    background: var(--surface-bright);
+    border: 1px solid var(--outline);
+    color: var(--on-surface);
     border-radius: 10px;
     font-size: 14px;
-    transition: border-color 0.15s ease;
+    transition: border-color 0.15s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 #customURL:focus,
 #resolutionInput:focus {
-    border-color: #89b4fa;
+    border-color: var(--primary);
     outline: none;
 }
 
-/* Combo box */
+/* Combo box / Select */
 .combo-wrapper {
     position: relative;
 }
@@ -301,11 +373,13 @@ body.fill-window #flashClipper {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #a6adc8;
+    color: var(--on-surface-variant);
     pointer-events: none;
+    transition: color 0.3s ease;
 }
 
-#resolutionSelect {
+#resolutionSelect,
+#themeSelect {
     position: absolute;
     right: 0;
     top: 0;
@@ -315,18 +389,39 @@ body.fill-window #flashClipper {
     cursor: pointer;
 }
 
+#themeSelect {
+    position: static;
+    width: 100%;
+    height: auto;
+    opacity: 1;
+    padding: 10px 12px;
+    background: var(--surface-bright);
+    border: 1px solid var(--outline);
+    color: var(--on-surface);
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.3s ease, color 0.3s ease;
+    appearance: none;
+}
+
+#themeSelect:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
 /* Buttons */
 #loadCustomBtn,
 #applyResolutionBtn {
     margin-top: 6px;
     padding: 10px 14px;
-    background: #45475a;
-    color: #cdd6f4;
+    background: var(--surface-container-high);
+    color: var(--on-surface);
     border: none;
     border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, background-color 0.3s ease, color 0.3s ease;
     box-shadow:
         0 2px 4px rgba(0,0,0,0.35),
         0 1px 1px rgba(0,0,0,0.25);
@@ -334,7 +429,7 @@ body.fill-window #flashClipper {
 
 #loadCustomBtn:hover,
 #applyResolutionBtn:hover {
-    background: #585b70;
+    background: var(--surface-container-highest);
 }
 
 /* Custom games add form */
@@ -355,15 +450,16 @@ body.fill-window #flashClipper {
     width: 100%;
     padding: 8px 10px;
     border-radius: 8px;
-    border: 1px solid #313244;
-    background: #181825;
-    color: #cdd6f4;
+    border: 1px solid var(--outline);
+    background: var(--surface-bright);
+    color: var(--on-surface);
     font-size: 13px;
+    transition: border-color 0.15s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 #customAdd input:focus {
     outline: none;
-    border-color: #89b4fa;
+    border-color: var(--primary);
 }
 
 #addCustomBtn {
@@ -371,27 +467,30 @@ body.fill-window #flashClipper {
     padding: 8px 12px;
     border-radius: 999px;
     border: none;
-    background: #45475a;
-    color: #cdd6f4;
+    background: var(--surface-container-high);
+    color: var(--on-surface);
     cursor: pointer;
     font-size: 13px;
+    transition: background 0.15s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 #addCustomBtn:hover {
-    background: #585b70;
+    background: var(--surface-container-highest);
 }
 
 /* Controls section */
 #controlsSection {
     margin-top: 16px;
     padding-top: 14px;
-    border-top: 1px solid #313244;
+    border-top: 1px solid var(--outline);
+    transition: border-color 0.3s ease;
 }
 
 #controlsSection h2 {
     font-size: 15px;
-    color: #89b4fa;
+    color: var(--primary);
     margin: 0 0 8px 0;
+    transition: color 0.3s ease;
 }
 
 #controlsSection button {
@@ -400,28 +499,31 @@ body.fill-window #flashClipper {
     padding: 8px 10px;
     border-radius: 999px;
     border: none;
-    background: #313244;
-    color: #cdd6f4;
+    background: var(--surface-container);
+    color: var(--on-surface);
     cursor: pointer;
     font-size: 13px;
+    transition: background 0.15s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 #controlsSection button:hover {
-    background: #45475a;
+    background: var(--surface-container-high);
 }
 
 /* Footer section */
 #footerSection {
     margin-top: 20px;
     padding-top: 14px;
-    border-top: 1px solid #313244;
+    border-top: 1px solid var(--outline);
     text-align: center;
+    transition: border-color 0.3s ease;
 }
 
 #footerSection p {
     margin: 0 0 10px 0;
     font-size: 13px;
-    color: #a6adc8;
+    color: var(--on-surface-variant);
+    transition: color 0.3s ease;
 }
 
 #sourceCodeBtn {
@@ -431,27 +533,27 @@ body.fill-window #flashClipper {
     padding: 10px 20px;
     border-radius: 999px;
     border: none;
-    background: #89b4fa;
-    color: #1e1e2e;
+    background: var(--primary);
+    color: var(--on-primary);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.15s ease, box-shadow 0.15s ease;
+    transition: background 0.15s ease, box-shadow 0.15s ease, background-color 0.3s ease, color 0.3s ease;
     box-shadow:
         0 2px 4px rgba(0,0,0,0.35),
         0 1px 1px rgba(0,0,0,0.25);
 }
 
 #sourceCodeBtn:hover {
-    background: #a6c8ff;
+    background: var(--primary-hover);
     box-shadow:
         0 3px 6px rgba(0,0,0,0.4),
         0 2px 2px rgba(0,0,0,0.3);
 }
 
 #sourceCodeBtn:active {
-    background: #7aa2f7;
+    background: var(--primary-active);
     transform: scale(0.98);
 }
 
@@ -462,9 +564,9 @@ body.fill-window #flashClipper {
     left: 10px;
     width: 38px;
     height: 38px;
-    background: #181825;
-    border: 1px solid #313244;
-    color: #cdd6f4;
+    background: var(--surface-bright);
+    border: 1px solid var(--outline);
+    color: var(--on-surface);
     border-radius: 10px;
     display: none;
     font-size: 20px;
@@ -472,6 +574,7 @@ body.fill-window #flashClipper {
     box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     justify-content: center;
     align-items: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 @media (max-width: 699px) {
@@ -553,6 +656,17 @@ body.forceDrawerButton #menuButton {
         <button id="applyResolutionBtn">Apply</button>
     </div>
 
+    <!-- THEME PICKER -->
+    <div id="themeBox">
+        <h2>Launcher Theme</h2>
+        <div class="combo-wrapper">
+            <select id="themeSelect">
+                <option value="catppuccin">Catppuccin</option>
+                <option value="nextcloud-pink">Nextcloud Pink</option>
+            </select>
+        </div>
+    </div>
+
     <!-- View & Privacy controls -->
     <div id="controlsSection">
         <h2>View & Privacy</h2>
@@ -589,6 +703,28 @@ if (params.get("drawerButton") === "false") {
 /* -------- LocalStorage keys -------- */
 const STORAGE_RECENT = "flashLauncher_recentGames_v1";
 const STORAGE_CUSTOM = "flashLauncher_customGames_v1";
+const STORAGE_THEME = "flashLauncher_theme_v1";
+
+/* -------- Theme Management -------- */
+function getTheme() {
+    try {
+        return localStorage.getItem(STORAGE_THEME) || "catppuccin";
+    } catch {
+        return "catppuccin";
+    }
+}
+
+function setTheme(theme) {
+    try {
+        localStorage.setItem(STORAGE_THEME, theme);
+        document.body.setAttribute("data-theme", theme);
+    } catch {
+        // ignore
+    }
+}
+
+// Apply saved theme on load
+setTheme(getTheme());
 
 /* -------- Static categories & games -------- */
 const STATIC_CATEGORIES = [
@@ -710,14 +846,13 @@ function createGameButton(name, url, isCustom = false) {
     btn.dataset.name = name.toLowerCase();
     btn.addEventListener("click", () => loadSWF(url, name));
     
-    // Add delete button for custom games
     if (isCustom) {
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-game-btn";
         deleteBtn.textContent = "×";
         deleteBtn.type = "button";
         deleteBtn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Prevent game from loading when delete is clicked
+            e.stopPropagation();
             deleteCustomGame(url);
         });
         btn.appendChild(deleteBtn);
@@ -726,56 +861,42 @@ function createGameButton(name, url, isCustom = false) {
     return btn;
 }
 
-/* -------- Delete Custom Game -------- */
 function deleteCustomGame(url) {
     const list = getCustomGames();
     const game = list.find(g => g.url === url);
-    
     if (!game) return;
-    
     const ok = confirm(`Delete "${game.name}"?`);
     if (!ok) return;
-    
     const newList = list.filter(g => g.url !== url);
     saveCustomGames(newList);
     renderCustomGames();
     applySearchFilter();
 }
 
-/* -------- Render static categories -------- */
 const staticContainer = document.getElementById("staticCategoriesContainer");
-
 function renderStaticCategories() {
     staticContainer.innerHTML = "";
     STATIC_CATEGORIES.forEach(cat => {
         const section = document.createElement("div");
         section.className = "category-section";
         section.dataset.categoryId = cat.id;
-
         const header = document.createElement("div");
         header.className = "category-header";
-
         const toggle = document.createElement("button");
         toggle.className = "toggle-btn";
         toggle.type = "button";
         toggle.textContent = "▾";
-
         const label = document.createElement("span");
         label.textContent = cat.label;
-
         header.appendChild(toggle);
         header.appendChild(label);
-
         const body = document.createElement("div");
         body.className = "category-body";
-
         const grid = document.createElement("div");
         grid.className = "game-grid";
-
         cat.games.forEach(g => {
             grid.appendChild(createGameButton(g.name, g.url));
         });
-
         body.appendChild(grid);
         section.appendChild(header);
         section.appendChild(body);
@@ -783,10 +904,8 @@ function renderStaticCategories() {
     });
 }
 
-/* -------- Render Recently Played -------- */
 const recentSection = document.getElementById("recentSection");
 const recentBody = document.getElementById("recentBody");
-
 function renderRecent() {
     const list = getRecentGames();
     if (!list || list.length === 0) {
@@ -804,9 +923,7 @@ function renderRecent() {
     recentBody.appendChild(grid);
 }
 
-/* -------- Render Custom Games -------- */
 const customGamesList = document.getElementById("customGamesList");
-
 function renderCustomGames() {
     const list = getCustomGames();
     customGamesList.innerHTML = "";
@@ -815,44 +932,35 @@ function renderCustomGames() {
     });
 }
 
-/* -------- Wire category collapsing -------- */
 function wireCategoryCollapsing() {
     document.querySelectorAll(".category-section").forEach(section => {
         const header = section.querySelector(".category-header");
         if (!header) return;
         header.addEventListener("click", (e) => {
-            // Don't collapse when clicking inside custom add inputs/buttons
             if (e.target.closest("#customAdd")) return;
             section.classList.toggle("collapsed");
         });
     });
 }
 
-/* -------- Global Search -------- */
 const searchInput = document.getElementById("searchInput");
-
 function applySearchFilter() {
     const q = searchInput.value.trim().toLowerCase();
     const sections = document.querySelectorAll(".category-section");
-
     sections.forEach(section => {
         const buttons = section.querySelectorAll(".game-btn");
         let anyVisible = false;
-
         buttons.forEach(btn => {
             const name = (btn.dataset.name || btn.textContent.toLowerCase());
             const visible = !q || name.includes(q);
             btn.style.display = visible ? "" : "none";
             if (visible) anyVisible = true;
         });
-
         section.style.display = anyVisible ? "" : "none";
         if (q && anyVisible) {
             section.classList.remove("collapsed");
         }
     });
-
-    // If no query, ensure all sections are visible
     if (!q) {
         sections.forEach(section => {
             if (section.id !== "recentSection" || getRecentGames().length > 0) {
@@ -861,33 +969,29 @@ function applySearchFilter() {
         });
     }
 }
-
 searchInput.addEventListener("input", applySearchFilter);
 
-/* -------- Ruffle Setup -------- */
 let player = null;
-
 window.addEventListener("load", () => {
     const container = document.getElementById("container");
     const ruffle = window.RufflePlayer?.newest?.();
-
     if (!ruffle) {
         alert("Ruffle failed to initialize.");
         return;
     }
-
     player = ruffle.createPlayer();
     player.style.width = "100%";
     player.style.height = "100%";
     container.appendChild(player);
-
-    // Render UI pieces
     renderStaticCategories();
     renderRecent();
     renderCustomGames();
     wireCategoryCollapsing();
     applySearchFilter();
-
+    
+    // Set theme selector value
+    document.getElementById("themeSelect").value = getTheme();
+    
     const file = params.get("file");
     if (file) {
         loadSWF(decodeURIComponent(file), "Direct SWF");
@@ -896,12 +1000,9 @@ window.addEventListener("load", () => {
     }
 });
 
-/* -------- Load SWF -------- */
 function loadSWF(url, name) {
     closeDrawer();
-    if (!name || !name.trim()) {
-        name = url;
-    }
+    if (!name || !name.trim()) name = url;
     addToRecent(name, url);
     player?.load(url).catch(err => {
         console.error(err);
@@ -909,47 +1010,36 @@ function loadSWF(url, name) {
     });
 }
 
-/* -------- Drawer Controls -------- */
 const drawer = document.getElementById("drawer");
 const menuButton = document.getElementById("menuButton");
-
 function openDrawer() { drawer.classList.add("open"); }
 function closeDrawer() { drawer.classList.remove("open"); }
-
 menuButton.onclick = () => drawer.classList.toggle("open");
-
 document.addEventListener("keydown", e => {
     if (e.ctrlKey && e.altKey && e.shiftKey && e.key.toLowerCase() === "r") {
         drawer.classList.toggle("open");
     }
 });
-
 document.addEventListener("click", e => {
-    if (drawer.classList.contains("open") &&
-        !drawer.contains(e.target) &&
-        e.target !== menuButton) {
+    if (drawer.classList.contains("open") && !drawer.contains(e.target) && e.target !== menuButton) {
         closeDrawer();
     }
 });
 
-/* -------- Custom Loader (ad-hoc) -------- */
 document.getElementById("loadCustomBtn").onclick = () => {
     const url = document.getElementById("customURL").value.trim();
     if (url) loadSWF(url, "Custom SWF");
 };
 
-/* -------- Custom Games Add -------- */
 document.getElementById("addCustomBtn").onclick = () => {
     const nameInput = document.getElementById("customNameInput");
     const urlInput = document.getElementById("customUrlInput");
     const name = nameInput.value.trim();
     const url = urlInput.value.trim();
-
     if (!name || !url) {
         alert("Please enter both a name and a URL.");
         return;
     }
-
     const list = getCustomGames().filter(g => g.url !== url);
     list.push({ name, url });
     saveCustomGames(list);
@@ -959,19 +1049,15 @@ document.getElementById("addCustomBtn").onclick = () => {
     urlInput.value = "";
 };
 
-/* -------- Resolution Picker -------- */
-const resolutionInput  = document.getElementById("resolutionInput");
+const resolutionInput = document.getElementById("resolutionInput");
 const resolutionSelect = document.getElementById("resolutionSelect");
 const applyResolutionBtn = document.getElementById("applyResolutionBtn");
-
-/* ---- Custom Resolution from URL ---- */
 const customResOption = params.get("customResOption");
 if (customResOption) {
     const m = customResOption.toLowerCase().match(/^(\d+)\s*x\s*(\d+)$/);
     if (m) {
         const formatted = `${m[1]}x${m[2]}`;
         resolutionInput.placeholder = formatted;
-
         let found = false;
         for (let opt of resolutionSelect.options) {
             if (opt.value.toLowerCase() === formatted) {
@@ -980,7 +1066,6 @@ if (customResOption) {
                 break;
             }
         }
-
         if (!found) {
             const newOpt = document.createElement("option");
             newOpt.value = formatted;
@@ -990,17 +1075,13 @@ if (customResOption) {
         }
     }
 }
-
 resolutionSelect.onchange = () => {
     if (resolutionSelect.value !== "") {
         resolutionInput.placeholder = resolutionSelect.value;
     }
 };
-
 applyResolutionBtn.onclick = () => {
     let val = resolutionInput.value.trim().toLowerCase();
-
-    // If textbox empty → use dropdown OR fallback to placeholder
     if (!val) {
         if (resolutionSelect.value) {
             val = resolutionSelect.value.toLowerCase();
@@ -1008,74 +1089,68 @@ applyResolutionBtn.onclick = () => {
             val = resolutionInput.placeholder.toLowerCase();
         }
     }
-
     const match = val.match(/^(\d+)\s*x\s*(\d+)$/);
     if (!match) {
         alert("Invalid resolution.\nFormat: 800x600");
         return;
     }
-
     const width = parseInt(match[1]);
     const height = parseInt(match[2]);
-
     if (width < 100 || height < 100) {
         alert("Minimum is 100x100.");
         return;
     }
-
-    clipper.style.width  = width  + "px";
+    clipper.style.width = width + "px";
     clipper.style.height = height + "px";
-
     alert(`Resolution set to ${width}×${height}`);
 };
 
-/* -------- View Controls -------- */
+/* -------- Theme Selector -------- */
+const THEME_COLORS = {
+    catppuccin: "#1e1e2e",
+    "nextcloud-pink": "rgb(32, 26, 30)"
+};
+
+document.getElementById("themeSelect").onchange = (e) => {
+    const theme = e.target.value;
+    setTheme(theme);
+    // Also directly set body background-color
+    document.body.style.backgroundColor = THEME_COLORS[theme];
+};
+
+// Set initial body background color
+document.body.style.backgroundColor = THEME_COLORS[getTheme()];
+
 const fillWindowBtn = document.getElementById("fillWindowBtn");
 const fullscreenBtn = document.getElementById("fullscreenBtn");
 const clearDataBtn = document.getElementById("clearDataBtn");
-
 let fillWindowActive = false;
 let savedWidth = null;
 let savedHeight = null;
-
-// Function to update clipper size to window dimensions
 function updateFillWindowSize() {
     if (fillWindowActive) {
         clipper.style.width = window.innerWidth + "px";
         clipper.style.height = window.innerHeight + "px";
     }
 }
-
-// Add resize listener for fill window mode
 window.addEventListener("resize", updateFillWindowSize);
-
 fillWindowBtn.onclick = () => {
     fillWindowActive = !fillWindowActive;
-    
     if (fillWindowActive) {
-        // Save current dimensions before filling window
         savedWidth = clipper.offsetWidth;
         savedHeight = clipper.offsetHeight;
-        
-        // Set to exact window dimensions
         clipper.style.width = window.innerWidth + "px";
         clipper.style.height = window.innerHeight + "px";
-        
         fillWindowBtn.textContent = "Exit Fill Window";
     } else {
-        // Restore saved dimensions
         if (savedWidth !== null && savedHeight !== null) {
             clipper.style.width = savedWidth + "px";
             clipper.style.height = savedHeight + "px";
         }
-        
         fillWindowBtn.textContent = "Fill Window";
     }
-    
     document.body.classList.toggle("fill-window", fillWindowActive);
 };
-
-/* Fullscreen API toggle */
 fullscreenBtn.onclick = () => {
     if (!document.fullscreenElement) {
         const el = document.documentElement;
@@ -1088,32 +1163,22 @@ fullscreenBtn.onclick = () => {
         else if (document.msExitFullscreen) document.msExitFullscreen();
     }
 };
-
 document.addEventListener("fullscreenchange", () => {
     fullscreenBtn.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Fullscreen";
 });
-
-/* Clear all launcher data */
 clearDataBtn.onclick = () => {
     const ok = confirm("This will delete all launcher history and custom games from this browser.\n\nContinue?");
     if (!ok) return;
-
     try {
-        // Remove known keys
         localStorage.removeItem(STORAGE_RECENT);
         localStorage.removeItem(STORAGE_CUSTOM);
-
-        // Also remove any other keys with our prefix (future-proof)
         for (let i = localStorage.length - 1; i >= 0; i--) {
             const key = localStorage.key(i);
             if (key && key.startsWith("flashLauncher_")) {
                 localStorage.removeItem(key);
             }
         }
-    } catch {
-        // ignore errors
-    }
-
+    } catch {}
     location.reload();
 };
 </script>
