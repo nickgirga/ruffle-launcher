@@ -1,23 +1,1071 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="generator" content="GitLab Pages">
-    <title>Plain HTML site using GitLab Pages</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <div class="navbar">
-      <a href="https://pages.gitlab.io/plain-html/">Plain HTML Example</a>
-      <a href="https://gitlab.com/pages/plain-html/">Repository</a>
-      <a href="https://gitlab.com/pages/">Other Examples</a>
+<head>
+<meta charset="utf-8" />
+<title>Flash Game Launcher</title>
+
+<!-- ------- Browser Detection + Forced Canvas on Firefox/Waterfox ------- -->
+<script>
+const ua = navigator.userAgent.toLowerCase();
+
+const isFirefoxCore =
+    ua.includes("firefox") &&
+    !ua.includes("seamonkey") &&
+    !ua.includes("iceweasel") &&
+    !ua.includes("icecat") &&
+    !ua.includes("librewolf");
+
+const isWaterfox =
+    ua.includes("waterfox") ||
+    ua.includes("goanna") ||
+    (isFirefoxCore && ua.includes("g") && ua.match(/firefox\/\d+/));
+
+const isFirefoxFamily = isFirefoxCore || isWaterfox;
+
+window.RufflePlayer = window.RufflePlayer || {};
+window.RufflePlayer.config = {
+    renderer: isFirefoxFamily ? "canvas" : "webgl"
+};
+</script>
+
+<!-- Stable Ruffle build -->
+<script src="https://unpkg.com/@ruffle-rs/ruffle/ruffle.js"></script>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    background: #1e1e2e;
+    color: #cdd6f4;
+    font-family: "Inter", "Roboto", sans-serif;
+}
+
+/* --- Flash Container --- */
+#flashClipper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #181825;
+    border-radius: 20px;
+    overflow: hidden;
+    width: 800px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.45),
+        0 2px 3px rgba(0,0,0,0.4);
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+ruffle-player {
+    width: 100%;
+    height: 100%;
+}
+
+/* Fill Window mode - visual adjustments only */
+body.fill-window #flashClipper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* --- Drawer (Material 3 Surface) --- */
+#drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 290px;
+    max-width: 85%;
+    background: #11111b;
+    color: #cdd6f4;
+    z-index: 99999;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    padding: 16px 14px 10px 14px;
+    border-radius: 0 18px 18px 0;
+    box-shadow: 4px 0 16px rgba(0,0,0,0.45), 2px 0 4px rgba(0,0,0,0.35);
+    overflow-y: auto;
+}
+
+#drawer.open {
+    transform: translateX(0);
+}
+
+#drawer h1 {
+    margin: 4px 0 12px 0;
+    font-size: 21px;
+    font-weight: 600;
+    color: #b4befe;
+    text-align: center;
+}
+
+/* Search bar */
+#searchBar {
+    margin-bottom: 12px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid #313244;
+    background: #181825;
+    color: #cdd6f4;
+    font-size: 14px;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: #89b4fa;
+}
+
+/* Category sections */
+.category-section {
+    margin-bottom: 8px;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.category-header span {
+    font-size: 15px;
+    font-weight: 500;
+    color: #cdd6f4;
+}
+
+.toggle-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: #181825;
+    color: #cdd6f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.category-section.collapsed .category-body {
+    display: none;
+}
+
+.category-section.collapsed .toggle-btn {
+    transform: rotate(-90deg);
+}
+
+.category-body {
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+/* --- Game Buttons --- */
+.game-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+@media (min-width: 700px) {
+    .game-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+}
+
+.game-btn {
+    position: relative;
+    padding: 12px;
+    padding-right: 36px;
+    background: #313244;
+    border-radius: 12px;
+    border: 1px solid #45475a;
+    color: #cdd6f4;
+    cursor: pointer;
+    transition: 0.15s ease;
+    font-size: 14px;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.25), 0 1px 1px rgba(0,0,0,0.2);
+}
+
+.game-btn:hover {
+    background: #45475a;
+    border-color: #585b70;
+}
+
+/* Delete button for custom games */
+.delete-game-btn {
+    position: absolute;
+    top: 10px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: #f38ba8;
+    border: none;
+    border-radius: 6px;
+    color: #1e1e2e;
+    font-size: 18px;
+    font-weight: normal;
+    line-height: 24px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, background 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.game-btn:hover .delete-game-btn {
+    opacity: 1;
+}
+
+.delete-game-btn:hover {
+    background: #eba0ac;
+}
+
+.delete-game-btn:active {
+    background: #f38ba8;
+    transform: scale(0.95);
+}
+
+/* Sections */
+#customLoader,
+#resolutionBox {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #313244;
+}
+
+#customLoader h2,
+#resolutionBox h2 {
+    color: #89b4fa;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+/* Inputs */
+#customURL,
+#resolutionInput {
+    width: 100%;
+    padding: 10px 12px;
+    background: #181825;
+    border: 1px solid #313244;
+    color: #cdd6f4;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.15s ease;
+}
+
+#customURL:focus,
+#resolutionInput:focus {
+    border-color: #89b4fa;
+    outline: none;
+}
+
+/* Combo box */
+.combo-wrapper {
+    position: relative;
+}
+
+.combo-wrapper::after {
+    content: "▾";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a6adc8;
+    pointer-events: none;
+}
+
+#resolutionSelect {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 36px;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Buttons */
+#loadCustomBtn,
+#applyResolutionBtn {
+    margin-top: 6px;
+    padding: 10px 14px;
+    background: #45475a;
+    color: #cdd6f4;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s ease;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.35),
+        0 1px 1px rgba(0,0,0,0.25);
+}
+
+#loadCustomBtn:hover,
+#applyResolutionBtn:hover {
+    background: #585b70;
+}
+
+/* Custom games add form */
+#customGamesList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#customAdd {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#customAdd input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #313244;
+    background: #181825;
+    color: #cdd6f4;
+    font-size: 13px;
+}
+
+#customAdd input:focus {
+    outline: none;
+    border-color: #89b4fa;
+}
+
+#addCustomBtn {
+    align-self: flex-end;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: none;
+    background: #45475a;
+    color: #cdd6f4;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+#addCustomBtn:hover {
+    background: #585b70;
+}
+
+/* Controls section */
+#controlsSection {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #313244;
+}
+
+#controlsSection h2 {
+    font-size: 15px;
+    color: #89b4fa;
+    margin: 0 0 8px 0;
+}
+
+#controlsSection button {
+    margin-right: 6px;
+    margin-top: 4px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: none;
+    background: #313244;
+    color: #cdd6f4;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+#controlsSection button:hover {
+    background: #45475a;
+}
+
+/* Mobile Drawer Button */
+#menuButton {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 38px;
+    height: 38px;
+    background: #181825;
+    border: 1px solid #313244;
+    color: #cdd6f4;
+    border-radius: 10px;
+    display: none;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 699px) {
+    #menuButton { display: flex; }
+}
+
+body.forceDrawerButton #menuButton {
+    display: flex !important;
+}
+</style>
+</head>
+<body>
+
+<!-- CENTERED FLASH BOX -->
+<div id="flashClipper">
+    <div id="container"></div>
+</div>
+
+<!-- MOBILE BUTTON -->
+<div id="menuButton">☰</div>
+
+<!-- DRAWER -->
+<div id="drawer">
+    <h1>Flash Games</h1>
+
+    <div id="searchBar">
+        <input id="searchInput" type="text" placeholder="Search games..." />
     </div>
 
-    <h1>Hello World!</h1>
+    <!-- Recently Played -->
+    <div id="recentSection" class="category-section" style="display:none;">
+        <div class="category-header">
+            <button class="toggle-btn" type="button">▾</button>
+            <span>Recently Played</span>
+        </div>
+        <div class="category-body" id="recentBody"></div>
+    </div>
 
-    <p>
-      This is a simple plain-HTML website on GitLab Pages, without any fancy static site generator.
-    </p>
-  </body>
+    <!-- Static categories container -->
+    <div id="staticCategoriesContainer"></div>
+
+    <!-- Custom Games -->
+    <div id="customSection" class="category-section">
+        <div class="category-header">
+            <button class="toggle-btn" type="button">▾</button>
+            <span>Custom Games</span>
+        </div>
+        <div class="category-body" id="customBody">
+            <div id="customGamesList"></div>
+            <div id="customAdd">
+                <input id="customNameInput" type="text" placeholder="Game name" />
+                <input id="customUrlInput" type="text" placeholder="SWF URL" />
+                <button id="addCustomBtn" type="button">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom SWF Loader (ad-hoc) -->
+    <div id="customLoader">
+        <h2>Load Custom SWF (temporary)</h2>
+        <input id="customURL" type="text" placeholder="Paste SWF URL..." />
+        <button id="loadCustomBtn">Load</button>
+    </div>
+
+    <!-- RESOLUTION PICKER -->
+    <div id="resolutionBox">
+        <h2>Resolution</h2>
+        <div class="combo-wrapper">
+            <input id="resolutionInput" type="text" placeholder="800x600">
+            <select id="resolutionSelect">
+                <option value="">— presets —</option>
+                <option value="800x600">800×600 (default)</option>
+                <option value="640x480">640×480</option>
+                <option value="1024x768">1024×768</option>
+                <option value="960x540">960×540</option>
+                <option value="1280x720">1280×720</option>
+            </select>
+        </div>
+        <button id="applyResolutionBtn">Apply</button>
+    </div>
+
+    <!-- View & Privacy controls -->
+    <div id="controlsSection">
+        <h2>View & Privacy</h2>
+        <button id="fillWindowBtn" type="button">Fill Window</button>
+        <button id="fullscreenBtn" type="button">Fullscreen</button>
+        <button id="clearDataBtn" type="button">Clear All Data</button>
+    </div>
+</div>
+
+<script>
+/* -------- URL PARAMS -------- */
+const params = new URLSearchParams(location.search);
+const clipper = document.getElementById("flashClipper");
+
+let w = parseInt(params.get("width"))  || 800;
+let h = parseInt(params.get("height")) || 600;
+
+clipper.style.width  = w + "px";
+clipper.style.height = h + "px";
+
+// Drawer button is visible by default, hide only if explicitly set to false
+if (params.get("drawerButton") === "false") {
+    // Don't add the class - button will remain hidden
+} else {
+    document.body.classList.add("forceDrawerButton");
+}
+
+/* -------- LocalStorage keys -------- */
+const STORAGE_RECENT = "flashLauncher_recentGames_v1";
+const STORAGE_CUSTOM = "flashLauncher_customGames_v1";
+
+/* -------- Static categories & games -------- */
+const STATIC_CATEGORIES = [
+    {
+        id: "classics",
+        label: "Classics",
+        games: [
+            { name:"Sushi Cat 2", url:"https://archive.org/cors/sushi-cat-2/sushi-cat-2.swf" },
+            { name:"Age of War", url:"https://archive.org/cors/flash_age_of_war/age_of_war.swf" },
+            { name:"Bloxors", url:"https://archive.org/cors/bloxors/bloxors.swf" }
+        ]
+    },
+    {
+        id: "psa",
+        label: "PSA Missions",
+        games: [
+            { name:"PSA Mission 1", url:"https://archive.org/cors/psa_mission1/PSA_M1.swf" },
+            { name:"PSA Mission 2", url:"https://archive.org/cors/psa_mission2/PSA_M2.swf" },
+            { name:"PSA Mission 3", url:"https://archive.org/cors/psa_mission3/PSA_M3.swf" },
+            { name:"PSA Mission 4", url:"https://archive.org/cors/psa_mission4/PSA_M4.swf" }
+        ]
+    },
+    {
+        id: "club",
+        label: "Club Penguin",
+        games: [
+            { name:"Hydro Hopper", url:"https://archive.org/cors/hydro-hopper/HydroHopper.swf" },
+            { name:"Aqua Grabber", url:"https://archive.org/cors/aqua-grabber/AquaGrabber.swf" },
+            { name:"Bean Counters", url:"https://archive.org/cors/bean-counters/BeanCounters.swf" },
+            { name:"Catchin' Waves", url:"https://archive.org/cors/catchin-waves/CatchinWaves.swf" },
+            { name:"Cart Surfer", url:"https://archive.org/cors/cart-surfer/CartSurfer.swf" },
+            { name:"Jet Pack Adventure", url:"https://archive.org/cors/jet-pack-adventure/JetPackAdventure.swf" },
+            { name:"Ice Fishing", url:"https://archive.org/cors/ice-fishing/IceFishing.swf" },
+            { name:"Pizzatron 3000", url:"https://archive.org/cors/pizzatron-3000/Pizzatron3000.swf" },
+            { name:"DJ3K", url:"https://archive.org/cors/dj3k-sa/DJ3K.swf" }
+        ]
+    },
+    {
+        id: "papas",
+        label: "Papa's Games & Friends",
+        games: [
+            { name:"Papa Louie 2", url:"https://archive.org/cors/papasgamesarchive/PapaLouie2.swf" },
+            { name:"Papa Louie 3", url:"https://archive.org/cors/papasgamesarchive/PapaLouie3.swf" },
+            { name:"Cactus McCoy", url:"https://archive.org/cors/papasgamesarchive/cactusmccoy.swf" },
+            { name:"Cactus McCoy 2", url:"https://archive.org/cors/papasgamesarchive/cactusmccoy2.swf" },
+            { name:"Jacksmith", url:"https://archive.org/cors/papasgamesarchive/jacksmith.swf" },
+            { name:"Papa Louie (v2)", url:"https://archive.org/cors/papasgamesarchive/papalouie_v2.swf" },
+            { name:"Papa's Bakeria", url:"https://archive.org/cors/papasgamesarchive/papasbakeria.swf" },
+            { name:"Papa's Burgeria", url:"https://archive.org/cors/papasgamesarchive/papasburgeria.swf" },
+            { name:"Papa's Cheeseria", url:"https://archive.org/cors/papasgamesarchive/papascheeseria_102.swf" },
+            { name:"Papa's Cupcakeria", url:"https://archive.org/cors/papasgamesarchive/papascupcakeria.swf" },
+            { name:"Papa's Donuteria", url:"https://archive.org/cors/papasgamesarchive/papasdonuteria.swf" },
+            { name:"Papa's Freezeria", url:"https://archive.org/cors/papasgamesarchive/papasfreezeria.swf" },
+            { name:"Papa's Hot Doggeria", url:"https://archive.org/cors/papasgamesarchive/papashotdoggeria.swf" },
+            { name:"Papa's Pancakeria", url:"https://archive.org/cors/papasgamesarchive/papaspancakeria.swf" },
+            { name:"Papa's Pastaria", url:"https://archive.org/cors/papasgamesarchive/papaspastaria.swf" },
+            { name:"Papa's Pizzeria (v2)", url:"https://archive.org/cors/papasgamesarchive/papaspizzeria_v2.swf" },
+            { name:"Papa's Scooperia", url:"https://archive.org/cors/papasgamesarchive/papasscooperia_v102.swf" },
+            { name:"Papa's Sushiria", url:"https://archive.org/cors/papasgamesarchive/papassushiria.swf" },
+            { name:"Papa's Taco Mia!", url:"https://archive.org/cors/papasgamesarchive/papostacomia.swf" },
+            { name:"Papa's Wingeria", url:"https://archive.org/cors/papasgamesarchive/papaswingeria.swf" },
+            { name:"Rock Garden", url:"https://archive.org/cors/papasgamesarchive/rockgarden_v2.swf" },
+            { name:"SNJ Midnight March", url:"https://archive.org/cors/papasgamesarchive/snjmidnightmarch.swf" },
+            { name:"Steak and Jake", url:"https://archive.org/cors/papasgamesarchive/steakandjake_freeversion.swf" }
+        ]
+    }
+];
+
+/* -------- Utility: LocalStorage helpers -------- */
+function getJson(key, fallback) {
+    try {
+        const v = localStorage.getItem(key);
+        return v ? JSON.parse(v) : fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function setJson(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+        // ignore
+    }
+}
+
+/* -------- Recently Played -------- */
+function getRecentGames() {
+    return getJson(STORAGE_RECENT, []);
+}
+
+function saveRecentGames(list) {
+    setJson(STORAGE_RECENT, list);
+}
+
+function addToRecent(name, url) {
+    let list = getRecentGames();
+    list = list.filter(g => g.url !== url);
+    list.unshift({ name, url });
+    if (list.length > 3) list = list.slice(0, 3);
+    saveRecentGames(list);
+    renderRecent();
+}
+
+/* -------- Custom Games -------- */
+function getCustomGames() {
+    return getJson(STORAGE_CUSTOM, []);
+}
+
+function saveCustomGames(list) {
+    setJson(STORAGE_CUSTOM, list);
+}
+
+/* -------- DOM helpers -------- */
+function createGameButton(name, url, isCustom = false) {
+    const btn = document.createElement("div");
+    btn.className = "game-btn";
+    btn.textContent = name;
+    btn.dataset.name = name.toLowerCase();
+    btn.addEventListener("click", () => loadSWF(url, name));
+    
+    // Add delete button for custom games
+    if (isCustom) {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-game-btn";
+        deleteBtn.textContent = "×";
+        deleteBtn.type = "button";
+        deleteBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent game from loading when delete is clicked
+            deleteCustomGame(url);
+        });
+        btn.appendChild(deleteBtn);
+    }
+    
+    return btn;
+}
+
+/* -------- Delete Custom Game -------- */
+function deleteCustomGame(url) {
+    const list = getCustomGames();
+    const game = list.find(g => g.url === url);
+    
+    if (!game) return;
+    
+    const ok = confirm(`Delete "${game.name}"?`);
+    if (!ok) return;
+    
+    const newList = list.filter(g => g.url !== url);
+    saveCustomGames(newList);
+    renderCustomGames();
+    applySearchFilter();
+}
+
+/* -------- Render static categories -------- */
+const staticContainer = document.getElementById("staticCategoriesContainer");
+
+function renderStaticCategories() {
+    staticContainer.innerHTML = "";
+    STATIC_CATEGORIES.forEach(cat => {
+        const section = document.createElement("div");
+        section.className = "category-section";
+        section.dataset.categoryId = cat.id;
+
+        const header = document.createElement("div");
+        header.className = "category-header";
+
+        const toggle = document.createElement("button");
+        toggle.className = "toggle-btn";
+        toggle.type = "button";
+        toggle.textContent = "▾";
+
+        const label = document.createElement("span");
+        label.textContent = cat.label;
+
+        header.appendChild(toggle);
+        header.appendChild(label);
+
+        const body = document.createElement("div");
+        body.className = "category-body";
+
+        const grid = document.createElement("div");
+        grid.className = "game-grid";
+
+        cat.games.forEach(g => {
+            grid.appendChild(createGameButton(g.name, g.url));
+        });
+
+        body.appendChild(grid);
+        section.appendChild(header);
+        section.appendChild(body);
+        staticContainer.appendChild(section);
+    });
+}
+
+/* -------- Render Recently Played -------- */
+const recentSection = document.getElementById("recentSection");
+const recentBody = document.getElementById("recentBody");
+
+function renderRecent() {
+    const list = getRecentGames();
+    if (!list || list.length === 0) {
+        recentSection.style.display = "none";
+        recentBody.innerHTML = "";
+        return;
+    }
+    recentSection.style.display = "";
+    recentBody.innerHTML = "";
+    const grid = document.createElement("div");
+    grid.className = "game-grid";
+    list.forEach(g => {
+        grid.appendChild(createGameButton(g.name, g.url));
+    });
+    recentBody.appendChild(grid);
+}
+
+/* -------- Render Custom Games -------- */
+const customGamesList = document.getElementById("customGamesList");
+
+function renderCustomGames() {
+    const list = getCustomGames();
+    customGamesList.innerHTML = "";
+    list.forEach(g => {
+        customGamesList.appendChild(createGameButton(g.name, g.url, true));
+    });
+}
+
+/* -------- Wire category collapsing -------- */
+function wireCategoryCollapsing() {
+    document.querySelectorAll(".category-section").forEach(section => {
+        const header = section.querySelector(".category-header");
+        if (!header) return;
+        header.addEventListener("click", (e) => {
+            // Don't collapse when clicking inside custom add inputs/buttons
+            if (e.target.closest("#customAdd")) return;
+            section.classList.toggle("collapsed");
+        });
+    });
+}
+
+/* -------- Global Search -------- */
+const searchInput = document.getElementById("searchInput");
+
+function applySearchFilter() {
+    const q = searchInput.value.trim().toLowerCase();
+    const sections = document.querySelectorAll(".category-section");
+
+    sections.forEach(section => {
+        const buttons = section.querySelectorAll(".game-btn");
+        let anyVisible = false;
+
+        buttons.forEach(btn => {
+            const name = (btn.dataset.name || btn.textContent.toLowerCase());
+            const visible = !q || name.includes(q);
+            btn.style.display = visible ? "" : "none";
+            if (visible) anyVisible = true;
+        });
+
+        section.style.display = anyVisible ? "" : "none";
+        if (q && anyVisible) {
+            section.classList.remove("collapsed");
+        }
+    });
+
+    // If no query, ensure all sections are visible
+    if (!q) {
+        sections.forEach(section => {
+            if (section.id !== "recentSection" || getRecentGames().length > 0) {
+                section.style.display = "";
+            }
+        });
+    }
+}
+
+searchInput.addEventListener("input", applySearchFilter);
+
+/* -------- Ruffle Setup -------- */
+let player = null;
+
+window.addEventListener("load", () => {
+    const container = document.getElementById("container");
+    const ruffle = window.RufflePlayer?.newest?.();
+
+    if (!ruffle) {
+        alert("Ruffle failed to initialize.");
+        return;
+    }
+
+    player = ruffle.createPlayer();
+    player.style.width = "100%";
+    player.style.height = "100%";
+    container.appendChild(player);
+
+    // Render UI pieces
+    renderStaticCategories();
+    renderRecent();
+    renderCustomGames();
+    wireCategoryCollapsing();
+    applySearchFilter();
+
+    const file = params.get("file");
+    if (file) {
+        loadSWF(decodeURIComponent(file), "Direct SWF");
+    } else {
+        openDrawer();
+    }
+});
+
+/* -------- Load SWF -------- */
+function loadSWF(url, name) {
+    closeDrawer();
+    if (!name || !name.trim()) {
+        name = url;
+    }
+    addToRecent(name, url);
+    player?.load(url).catch(err => {
+        console.error(err);
+        alert("Failed to load SWF (CORS or invalid file).");
+    });
+}
+
+/* -------- Drawer Controls -------- */
+const drawer = document.getElementById("drawer");
+const menuButton = document.getElementById("menuButton");
+
+function openDrawer() { drawer.classList.add("open"); }
+function closeDrawer() { drawer.classList.remove("open"); }
+
+menuButton.onclick = () => drawer.classList.toggle("open");
+
+document.addEventListener("keydown", e => {
+    if (e.ctrlKey && e.altKey && e.shiftKey && e.key.toLowerCase() === "r") {
+        drawer.classList.toggle("open");
+    }
+});
+
+document.addEventListener("click", e => {
+    if (drawer.classList.contains("open") &&
+        !drawer.contains(e.target) &&
+        e.target !== menuButton) {
+        closeDrawer();
+    }
+});
+
+/* -------- Custom Loader (ad-hoc) -------- */
+document.getElementById("loadCustomBtn").onclick = () => {
+    const url = document.getElementById("customURL").value.trim();
+    if (url) loadSWF(url, "Custom SWF");
+};
+
+/* -------- Custom Games Add -------- */
+document.getElementById("addCustomBtn").onclick = () => {
+    const nameInput = document.getElementById("customNameInput");
+    const urlInput = document.getElementById("customUrlInput");
+    const name = nameInput.value.trim();
+    const url = urlInput.value.trim();
+
+    if (!name || !url) {
+        alert("Please enter both a name and a URL.");
+        return;
+    }
+
+    const list = getCustomGames().filter(g => g.url !== url);
+    list.push({ name, url });
+    saveCustomGames(list);
+    renderCustomGames();
+    applySearchFilter();
+    nameInput.value = "";
+    urlInput.value = "";
+};
+
+/* -------- Resolution Picker -------- */
+const resolutionInput  = document.getElementById("resolutionInput");
+const resolutionSelect = document.getElementById("resolutionSelect");
+const applyResolutionBtn = document.getElementById("applyResolutionBtn");
+
+/* ---- Custom Resolution from URL ---- */
+const customResOption = params.get("customResOption");
+if (customResOption) {
+    const m = customResOption.toLowerCase().match(/^(\d+)\s*x\s*(\d+)$/);
+    if (m) {
+        const formatted = `${m[1]}x${m[2]}`;
+        resolutionInput.placeholder = formatted;
+
+        let found = false;
+        for (let opt of resolutionSelect.options) {
+            if (opt.value.toLowerCase() === formatted) {
+                resolutionSelect.value = opt.value;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            const newOpt = document.createElement("option");
+            newOpt.value = formatted;
+            newOpt.textContent = formatted + " (custom)";
+            resolutionSelect.appendChild(newOpt);
+            resolutionSelect.value = formatted;
+        }
+    }
+}
+
+resolutionSelect.onchange = () => {
+    if (resolutionSelect.value !== "") {
+        resolutionInput.placeholder = resolutionSelect.value;
+    }
+};
+
+applyResolutionBtn.onclick = () => {
+    let val = resolutionInput.value.trim().toLowerCase();
+
+    // If textbox empty → use dropdown OR fallback to placeholder
+    if (!val) {
+        if (resolutionSelect.value) {
+            val = resolutionSelect.value.toLowerCase();
+        } else {
+            val = resolutionInput.placeholder.toLowerCase();
+        }
+    }
+
+    const match = val.match(/^(\d+)\s*x\s*(\d+)$/);
+    if (!match) {
+        alert("Invalid resolution.\nFormat: 800x600");
+        return;
+    }
+
+    const width = parseInt(match[1]);
+    const height = parseInt(match[2]);
+
+    if (width < 100 || height < 100) {
+        alert("Minimum is 100x100.");
+        return;
+    }
+
+    clipper.style.width  = width  + "px";
+    clipper.style.height = height + "px";
+
+    alert(`Resolution set to ${width}×${height}`);
+};
+
+/* -------- View Controls -------- */
+const fillWindowBtn = document.getElementById("fillWindowBtn");
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const clearDataBtn = document.getElementById("clearDataBtn");
+
+let fillWindowActive = false;
+let savedWidth = null;
+let savedHeight = null;
+
+// Function to update clipper size to window dimensions
+function updateFillWindowSize() {
+    if (fillWindowActive) {
+        clipper.style.width = window.innerWidth + "px";
+        clipper.style.height = window.innerHeight + "px";
+    }
+}
+
+// Add resize listener for fill window mode
+window.addEventListener("resize", updateFillWindowSize);
+
+fillWindowBtn.onclick = () => {
+    fillWindowActive = !fillWindowActive;
+    
+    if (fillWindowActive) {
+        // Save current dimensions before filling window
+        savedWidth = clipper.offsetWidth;
+        savedHeight = clipper.offsetHeight;
+        
+        // Set to exact window dimensions
+        clipper.style.width = window.innerWidth + "px";
+        clipper.style.height = window.innerHeight + "px";
+        
+        fillWindowBtn.textContent = "Exit Fill Window";
+    } else {
+        // Restore saved dimensions
+        if (savedWidth !== null && savedHeight !== null) {
+            clipper.style.width = savedWidth + "px";
+            clipper.style.height = savedHeight + "px";
+        }
+        
+        fillWindowBtn.textContent = "Fill Window";
+    }
+    
+    document.body.classList.toggle("fill-window", fillWindowActive);
+};
+
+/* Fullscreen API toggle */
+fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement) {
+        const el = document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+    }
+};
+
+document.addEventListener("fullscreenchange", () => {
+    fullscreenBtn.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Fullscreen";
+});
+
+/* Clear all launcher data */
+clearDataBtn.onclick = () => {
+    const ok = confirm("This will delete all launcher history and custom games from this browser.\n\nContinue?");
+    if (!ok) return;
+
+    try {
+        // Remove known keys
+        localStorage.removeItem(STORAGE_RECENT);
+        localStorage.removeItem(STORAGE_CUSTOM);
+
+        // Also remove any other keys with our prefix (future-proof)
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("flashLauncher_")) {
+                localStorage.removeItem(key);
+            }
+        }
+    } catch {
+        // ignore errors
+    }
+
+    location.reload();
+};
+</script>
+
+</body>
 </html>
-
