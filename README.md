@@ -28,6 +28,12 @@ This repository contains **ONLY** HTML, CSS, and JavaScript code that provides a
 - **Privacy Controls**: Clear all launcher data with one click
 - **URL Parameters**: Extensive URL customization options for embedding
 
+## Live Demo
+
+Try the launcher live at: **[https://ruffle-launcher-5a5a1e.gitlab.io/](https://ruffle-launcher-5a5a1e.gitlab.io/)**
+
+**Important Note for iframe embedding**: The GitLab Pages demo likely won't work when embedded in an iframe on a different domain (e.g., trying to iframe from a self-hosted server) due to cross-origin restrictions. For iframe embedding (such as Nextcloud widgets), you must deploy the launcher to your own domain using the [Quick Installation](#quick-installation) instructions below.
+
 ## Quick Installation
 
 Deploy the launcher with a single command:
