@@ -1,6 +1,6 @@
 # Ruffle Launcher
 
-A self-contained, all-in-one Flash game launcher built with [Ruffle](https://ruffle.rs/). Designed for easy deployment and iframe embedding, making it perfect for creating Flash game widgets in applications like Nextcloud.
+A self-contained, all-in-one Flash game launcher built with [Ruffle](https://ruffle.rs/). Designed for easy deployment and iframe embedding, making it perfect for creating Flash game widgets in applications like [Nextcloud](https://nextcloud.com/).
 
 ---
 
@@ -8,7 +8,7 @@ A self-contained, all-in-one Flash game launcher built with [Ruffle](https://ruf
 
 **THIS PROJECT CONTAINS NO COPYRIGHTED SWF FILES OR FLASH CONTENT.**
 
-This repository contains **ONLY** HTML, CSS, and JavaScript code that provides an interface for loading remote SWF files. The launcher itself does not host, distribute, or include any Flash games or copyrighted content. All game files are referenced from external sources (primarily Archive.org) and are loaded dynamically at runtime.
+This repository contains **ONLY** HTML, CSS, and JavaScript code that provides an interface for loading remote SWF files. The launcher itself does not host, distribute, or include any Flash games or copyrighted content. All game files are referenced from external sources (primarily [Archive.org](https://archive.org/)) and are loaded dynamically at runtime.
 
 **Users are responsible for ensuring they have proper rights and permissions to access any remote SWF files they load through this launcher.**
 
@@ -34,6 +34,16 @@ Try the launcher live at: **[https://ruffle-launcher-5a5a1e.gitlab.io/](https://
 
 **Important Note for iframe embedding**: The GitLab Pages demo likely won't work when embedded in an iframe on a different domain (e.g., trying to iframe from a self-hosted server) due to cross-origin restrictions. For iframe embedding (such as Nextcloud widgets), you must deploy the launcher to your own domain using the [Quick Installation](#quick-installation) instructions below.
 
+## Screenshots
+
+Screenshots taken from an [iFrame Widget](https://apps.nextcloud.com/apps/iframewidget) on a Nextcloud instance's dashboard
+
+<img src="./.screenshots/pizzatron_3000_example.png" width="800">
+
+<img src="./.screenshots/cart_surfer_example.png" width="800">
+
+<img src="./.screenshots/papas_freezeria_example.png" width="800">
+
 ## Quick Installation
 
 Deploy the launcher with a single command:
@@ -43,7 +53,7 @@ Deploy the launcher with a single command:
 sudo mkdir -p /var/www/html/ruffle
 
 # Download the launcher
-sudo curl -o /var/www/html/ruffle/ruffle_launcher.html https://gitlab.com/nickgirga/ruffle-launcher/-/raw/master/public/index.html
+sudo curl -Lo /var/www/html/ruffle/ruffle_launcher.html https://gitlab.com/nickgirga/ruffle-launcher/-/raw/master/public/index.html
 ```
 
 The launcher will then be accessible at:
@@ -161,7 +171,7 @@ For one-time testing without saving to your library:
 
 ## Nextcloud Integration
 
-The Ruffle Launcher is ideal for use with the [Nextcloud iFrame Widget app](https://apps.nextcloud.com/apps/files_iframe), allowing you to have a Flash game launcher widget on your Nextcloud dashboard.
+The Ruffle Launcher is ideal for use with the [Nextcloud iFrame Widget app](https://apps.nextcloud.com/apps/iframewidget), allowing you to have a Flash game launcher widget on your Nextcloud dashboard.
 
 ### Setup Instructions
 
@@ -172,7 +182,7 @@ The Ruffle Launcher is ideal for use with the [Nextcloud iFrame Widget app](http
 2. **Deploy the Ruffle Launcher** on your server:
    ```bash
    sudo mkdir -p /var/www/html/ruffle
-   sudo curl -o /var/www/html/ruffle/ruffle_launcher.html https://gitlab.com/nickgirga/ruffle-launcher/-/raw/master/public/index.html
+   sudo curl -Lo /var/www/html/ruffle/ruffle_launcher.html https://gitlab.com/nickgirga/ruffle-launcher/-/raw/master/public/index.html
    ```
 
 3. **Add the widget to your Nextcloud dashboard**:
@@ -180,14 +190,15 @@ The Ruffle Launcher is ideal for use with the [Nextcloud iFrame Widget app](http
    - Click "Customize"
    - Add the "iFrame Widget"
 
-4. **Configure the widget**:
-   - **URL**: `https://yourdomain.com/ruffle/ruffle_launcher.html`
+4. **Configure the widget in your Personal Settings**:
+   - Click your avatar icon in the top-right corner
+   - Go to "Personal settings"
+   - Navigate to "iFrame Widget"
+   - Set your **URL**: `https://yourdomain.com/ruffle/ruffle_launcher.html`
    - **Optional**: Add URL parameters for customization:
      ```
-     https://yourdomain.com/ruffle/ruffle_launcher.html?width=900&height=600&drawerButton=true
+     https://yourdomain.com/ruffle/ruffle_launcher.html?width=640&height=405&customResOption=640x405
      ```
-
-5. **Adjust widget size** on the dashboard to your preference
 
 ### Recommended Settings for Nextcloud
 
@@ -226,7 +237,7 @@ Ruffle itself supports all modern browsers. For the best experience, use an up-t
 
 ### Using Archive.org (Internet Archive)
 
-Archive.org is one of the best sources for finding CORS-enabled SWF files. They provide a special CORS endpoint that makes files accessible to web applications like this launcher.
+[Archive.org](https://archive.org) is one of the best sources for finding CORS-enabled SWF files. They provide a special CORS endpoint that makes files accessible to web applications like this launcher.
 
 #### How to Get CORS-Enabled URLs from Archive.org
 
