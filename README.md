@@ -322,7 +322,7 @@ While Archive.org is the most reliable source for CORS-enabled SWF files, you ma
 The launcher comes pre-loaded with several categories:
 
 ### Classics
-- Sushi Cat 2, Age of War, Bloxors
+- Sushi Cat 2, Age of War, Bloxors, Super Mario Flash, Ultimate Flash Sonic
 
 ### PSA Missions
 - PSA Mission 1-4 (Club Penguin)
