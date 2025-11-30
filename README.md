@@ -322,7 +322,7 @@ While Archive.org is the most reliable source for CORS-enabled SWF files, you ma
 The launcher comes pre-loaded with several categories:
 
 ### Classics
-- Sushi Cat 2, Age of War, Bloxors, Super Mario Flash, Ultimate Flash Sonic, Happy Wheels, Pacman, Space Invaders, Flash Tetris, Miniclip Tetris
+- Sushi Cat 2, Age of War, Bloxors, Super Mario Flash, Ultimate Flash Sonic, Happy Wheels, Pacman, Space Invaders, Flash Tetris, Miniclip Tetris, Nyan Cat: Lost In Space, Flappy Bird, Master Solitaire
 
 ### Angry Birds
 - Angry Birds HD
